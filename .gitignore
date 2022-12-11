@@ -1,0 +1,63 @@
+# This .gitignore file should be placed at the root of your Unity project directory
+
+# See https://help.github.com/articles/ignoring-files for more about ignoring files.
+
+# Ignore temp files
+Temp/
+
+# Ignore Unity's Library folder
+Library/
+
+# Ignore Unity's built-in assets
+Assets/AssetStoreTools*
+
+# Ignore the OSX .DS_Store file
+.DS_Store
+
+# Ignore Visual Studio temporary files
+*.csproj.user
+
+# Ignore Visual Studio generated files
+*.csproj.pidb
+*.csproj.files
+*.sln
+
+# Ignore JetBrains Rider temporary files
+*.sln.iml
+*.idea/
+
+# Ignore Visual Studio's cache/lock files
+*.csproj.lock.json
+*.csproj.assets.cache
+
+# Ignore the build directory
+Build/
+
+# Ignore the generated Visual Studio project files
+ProjectSettings/
+
+# Ignore auto-generated Visual Studio files
+ExportedObj/
+*.unityproj
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+
+# Ignore OSX folder attribute files
+.DS_Store
+
+# Ignore OSX resource fork files
+*.AppleDouble
+
+# Ignore OSX spotlight index files
+.Spotlight-V100
+.Trashes
+
+# Ignore the ReSharper cache folder
+ReSharper*/
