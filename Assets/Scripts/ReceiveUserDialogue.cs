@@ -1,26 +1,32 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 public class ReceiveUserDialogue : MonoBehaviour
 {
     // The URL of the API endpoint
     //private string apiUrl = "http://localhost:5000/api/dialogue";
-    private string apiUrl = "https://64e21ebc-54f8-4538-8f03-d234ac707624.mock.pstmn.io";
+    private string apiUrl = "http://127.0.0.1:5000/api/getDialogText";
+
+    int TimeInSeconds = 15; //time interval for coroutine
 
     void Start()
     {
-        // Start listening for incoming POST requests
+        // Starts periodically sending requests.
         StartCoroutine(ListenForRequests());
     }
 
+
+    //Gets bulk response from the API and then calls the TriggerAction method to send back to Unity UI.
     IEnumerator ListenForRequests()
     {
         // Loop indefinitely
         while (true)
         {
-            // Create a new UnityWebRequest to receive the POST from the Flask server
-            UnityWebRequest request = UnityWebRequest.Post(apiUrl, "");
+            // Create a new UnityWebRequest to receive the Get from the Flask server
+            UnityWebRequest request = UnityWebRequest.Get(apiUrl);
 
             // Send the request and wait for a response
             request.SendWebRequest();
@@ -40,39 +46,52 @@ public class ReceiveUserDialogue : MonoBehaviour
             {
                 // The request was successful, get the JSON data from the response
                 string jsonData = request.downloadHandler.text;
+                Debug.Log("Json Data: " + jsonData);
+
 
                 // Parse the JSON data using the JsonUtility class
-                textConversationStatement data = JsonUtility.FromJson<textConversationStatement>(jsonData);
+                List<TextConversationStatement> data = JsonConvert.DeserializeObject<List<TextConversationStatement>>(jsonData);
 
-                // Trigger the action
-                TriggerAction(data);
+                //Debug.Log("Line 54 - Data: " + data);
+
+                if(data.Count != 0){
+                    // Trigger the action
+                    TriggerAction(data);
+                }
+                else{
+                    Debug.Log("The fracking list was empty! >:(");
+                }
+
             }
+
+            yield return new WaitForSeconds(TimeInSeconds);
         }
     }
 
-    void TriggerAction(textConversationStatement data){
+
+    //Takes in the data from the coroutine and then sends it to the Unity UI via Dialogue_Behavior object.
+    void TriggerAction(List<TextConversationStatement> data){
+        //TODO Implement functionality to stop coroutine conversations when leaving a certain proximity around character
+        //Stops ListenForRequests once one request is passed back to userUI.
+
         //Use data to send back to UI backend
         Dialogue_Behavior dialogueBehavior = FindObjectOfType<Dialogue_Behavior>();
-        dialogueBehavior.updateText(data.fromUser, data.textStatement);
+
+        foreach(TextConversationStatement item in data){
+            Debug.Log("Item Value: " + item.textStatement);
+            dialogueBehavior.updateText(item.fromUser, item.textStatement);
+        };
     }
 
 }
 
-public class textConversationStatement{
-    // The time the prompt was created (gives order to the conversation, smaller numbers occurred earlier)
-    public int samplePosition;
-    // The character the conversation is linked to.
+
+public class TextConversationStatement
+{
+    public List<TextConversationStatement> items;
     public string character;
-    // Indicates whether this is from the User talking or GPT-3 responding.
     public bool fromUser;
-    //The actual text to be displayed in a textMeshPro Component.
+    public int samplePosition;
     public string textStatement;
-    // Constructor for the textConversationStatement class
-    public textConversationStatement(int samplePosition, string character, bool fromUser, string textStatement)
-    {
-        this.samplePosition = samplePosition;
-        this.character = character;
-        this.fromUser = fromUser;
-        this.textStatement = textStatement;
-    }
+
 }
