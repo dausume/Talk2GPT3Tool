@@ -48,7 +48,6 @@ public class ReceiveUserDialogue : MonoBehaviour
                 string jsonData = request.downloadHandler.text;
                 Debug.Log("Json Data: " + jsonData);
 
-
                 // Parse the JSON data using the JsonUtility class
                 List<TextConversationStatement> data = JsonConvert.DeserializeObject<List<TextConversationStatement>>(jsonData);
 
@@ -85,7 +84,6 @@ public class ReceiveUserDialogue : MonoBehaviour
 
 }
 
-
 public class TextConversationStatement
 {
     public List<TextConversationStatement> items;
@@ -93,5 +91,4 @@ public class TextConversationStatement
     public bool fromUser;
     public int samplePosition;
     public string textStatement;
-
 }

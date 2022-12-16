@@ -16,10 +16,10 @@ public class Dialogue_Behavior : MonoBehaviour
     }
 
     public void updateText(bool fromUser, string dialogue){
-        if(!fromUser){
+        if(!fromUser){ // AI Response
             GPT3_textBox.text = dialogue;
         }
-        else if (fromUser){
+        else if (fromUser){ //user message
             user_textbox.text = dialogue;
         }
     }
