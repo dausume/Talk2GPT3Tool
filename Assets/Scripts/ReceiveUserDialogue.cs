@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 public class ReceiveUserDialogue : MonoBehaviour
 {
@@ -48,13 +49,11 @@ public class ReceiveUserDialogue : MonoBehaviour
                 Debug.Log("Json Data: " + jsonData);
 
                 // Parse the JSON data using the JsonUtility class
-                List<TextConversationStatement> data = JsonUtility.FromJson<List<TextConversationStatement>>(jsonData);
-                //List<textConversationStatement> data = JsonUtility.FromJson<List<textConversationStatement>>(jsonData);
+                List<TextConversationStatement> data = JsonConvert.DeserializeObject<List<TextConversationStatement>>(jsonData);
+
+                //Debug.Log("Line 54 - Data: " + data);
 
                 if(data.Count != 0){
-                    Debug.Log("Data " + data);
-                    //Debug.Log("From User?: " + data[0].fromUser + " | Statement: " + data[0].textStatement);
-
                     // Trigger the action
                     TriggerAction(data);
                 }
@@ -73,39 +72,21 @@ public class ReceiveUserDialogue : MonoBehaviour
     void TriggerAction(List<TextConversationStatement> data){
         //TODO Implement functionality to stop coroutine conversations when leaving a certain proximity around character
         //Stops ListenForRequests once one request is passed back to userUI.
-        //StopAllCoroutines();
-
-
 
         //Use data to send back to UI backend
         Dialogue_Behavior dialogueBehavior = FindObjectOfType<Dialogue_Behavior>();
-        //dialogueBehavior.updateText(data.fromUser, data.textStatement);
-        //dialogueBehavior.updateText(data[0].fromUser, data[0].textStatement);
+
+        foreach(TextConversationStatement item in data){
+            Debug.Log("Item Value: " + item.textStatement);
+            dialogueBehavior.updateText(item.fromUser, item.textStatement);
+        };
     }
 
 }
 
-/*public class textConversationStatement{
-    // The time the prompt was created (gives order to the conversation, smaller numbers occurred earlier)
-    public int samplePosition;
-    // The character the conversation is linked to.
-    public string character;
-    // Indicates whether this is from the User talking or GPT-3 responding.
-    public bool fromUser;
-    //The actual text to be displayed in a textMeshPro Component.
-    public string textStatement;
-    // Constructor for the textConversationStatement class
-    public textConversationStatement(int samplePosition, string character, bool fromUser, string textStatement)
-    {
-        this.samplePosition = samplePosition;
-        this.character = character;
-        this.fromUser = fromUser;
-        this.textStatement = textStatement;
-    }
-}*/
-
 public class TextConversationStatement
 {
+    public List<TextConversationStatement> items;
     public string character;
     public bool fromUser;
     public int samplePosition;
